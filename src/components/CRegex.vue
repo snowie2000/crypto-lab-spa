@@ -271,4 +271,7 @@ textarea {
 .collapse-enter-active, .collapse-leave-active {
   transition: height .3s ease;
 }
+/deep/ .el-button+.el-button {
+  margin-left: 9px;
+}
 </style>
