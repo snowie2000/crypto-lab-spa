@@ -5,7 +5,10 @@ import {
     Tree,
     Input,
     Button,
+    ButtonGroup,
     Alert,
+    RadioButton,
+    RadioGroup,
     Option,
     OptionGroup,
     Tooltip,
@@ -27,6 +30,9 @@ Vue.use(TabPane)
 Vue.use(Tree)
 Vue.use(Table)
 Vue.use(Button)
+Vue.use(RadioGroup)
+Vue.use(RadioButton)
+Vue.use(ButtonGroup)
 Vue.use(OptionGroup)
 Vue.use(TableColumn)
 Vue.use(Loading)

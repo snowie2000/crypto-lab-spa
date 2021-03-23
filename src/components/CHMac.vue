@@ -1,14 +1,24 @@
 <template>
   <div id="hmacform">
-    <div style="margin-bottom: 10px"><label>Secret: <input type="text" v-model="secret" @input="updateHash" style="margin-right: 20px"></label>Algorithm: <el-select @change="updateHash" v-model="hashmethod">
-      <el-option v-for="name in algorithm" :key="name" :value="name"></el-option>
-    </el-select></div>
+      <div class="row">
+      <label>Secret: <input type="text" v-model="secret" @input="updateHash"
+                                                           style="margin-right: 20px"></label>
+      </div>
+      <div class="row">
+      <label>Algorithm:
+        <el-select @change="updateHash" v-model="hashmethod">
+          <el-option v-for="name in algorithm" :key="name" :value="name"></el-option>
+        </el-select>
+      </label>
+      </div>
     <div>HMAC for text: <span id="output">{{ hmacHex }}</span></div>
-    <el-input type="textarea" style="padding: 10px 0" @input="hashText" :autosize="{minRows: 20, maxRows: 30}" placeholder="Type to get HMAC" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" v-model="hmacText"></el-input>
-
+    <el-input type="textarea" style="padding: 10px 0" @input="hashText" :autosize="{minRows: 20, maxRows: 30}"
+              placeholder="Type to get HMAC" autocomplete="off" autocorrect="off" autocapitalize="off"
+              spellcheck="false" v-model="hmacText"></el-input>
     <div>
       <span>HMAC for file: </span>
-      <input type="file" @change="hashFile" ref="fileinput" style="visibility: hidden; width: 0; height: 0"><el-button type="info" plain @click="openFile">Select a file</el-button>
+      <input type="file" @change="hashFile" ref="fileinput" style="visibility: hidden; width: 0; height: 0">
+      <el-button type="info" plain @click="openFile">Select a file</el-button>
       <ul class="hashlist">
         <li v-for="(item, index) in hashlist" :key="index">
           <span class="filename">{{ item.filename }}</span><span class="filehash">{{ item.hash }}</span>
@@ -41,14 +51,14 @@ export default {
       secret: "",
       hashmethod: "SHA1",
       algorithm: [
-          "SHA1",
-          "SHA3",
-          "SHA224",
-          "SHA256",
-          "SHA384",
-          "SHA512",
-          "MD5",
-          "Ripemd160"
+        "SHA1",
+        "SHA3",
+        "SHA224",
+        "SHA256",
+        "SHA384",
+        "SHA512",
+        "MD5",
+        "Ripemd160"
       ],
       hashlist: []
     }
@@ -98,7 +108,7 @@ export default {
       let result = {
         filename: e.target.files[0].name,
       }
-      reader.onloadend = () =>{
+      reader.onloadend = () => {
         binary = (reader.result);
         result.hash = hex.stringify(this.getDigestMethod()(latin1.parse(binary), this.secret))
         this.hashlist.push(result)
@@ -119,53 +129,64 @@ export default {
 </script>
 
 <style scoped lang="less">
-  #hmacform {
-    color: #606266;
-    font-size: 14px;
+.row {
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+#hmacform {
+  color: #606266;
+  font-size: 14px;
+}
+
+#output {
+  text-transform: uppercase;
+  word-break: break-word;
+}
+
+.hashlist {
+  list-style-type: none;
+  line-height: 25px;
+  padding-left: 5px;
+
+  .filename {
+    display: inline-block;
+    width: 50%;
+    max-width: 300px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: middle;
   }
-  #output {
+
+  .filehash {
+    display: inline-block;
+    vertical-align: middle;
     text-transform: uppercase;
     word-break: break-word;
+    font-family: Monospaced, monospace, Consolas;
   }
-  .hashlist {
-    list-style-type: none;
-    line-height: 25px;
-    padding-left: 5px;
-    .filename {
-      display: inline-block;
-      width: 50%;
-      max-width: 300px;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-      vertical-align: middle;
-    }
-    .filehash {
-      display: inline-block;
-      vertical-align: middle;
-      text-transform: uppercase;
-      word-break: break-word;
-      font-family: Monospaced,monospace,Consolas;
-    }
-  }
-  input[type=text] {
-    -webkit-appearance: none;
-    background-color: #fff;
-    background-image: none;
-    border-radius: 4px;
-    border: 1px solid #dcdfe6;
-    box-sizing: border-box;
-    color: #606266;
-    display: inline-block;
-    font-size: inherit;
-    height: 32px;
-    line-height: 32px;
+}
+
+input[type=text] {
+  -webkit-appearance: none;
+  background-color: #fff;
+  background-image: none;
+  border-radius: 4px;
+  border: 1px solid #dcdfe6;
+  box-sizing: border-box;
+  color: #606266;
+  display: inline-block;
+  font-size: inherit;
+  height: 32px;
+  line-height: 32px;
+  outline: none;
+  padding: 0 15px;
+  transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+
+  &:focus {
     outline: none;
-    padding: 0 15px;
-    transition: border-color .2s cubic-bezier(.645,.045,.355,1);
-    &:focus {
-      outline: none;
-      border-color: #409eff;
-    }
+    border-color: #409eff;
   }
+}
 </style>
