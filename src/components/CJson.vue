@@ -11,6 +11,10 @@
 import prettier from "json-stringify-pretty-compact"
 import editor from "vue2-ace-editor"
 import {ResizeSensor} from "css-element-queries"
+import 'brace/ext/language_tools' //language extension prerequsite...
+import 'brace/mode/json'    //language
+import 'brace/theme/github'
+import 'brace/snippets/json' //snippet
 
 export default {
   name: "CJson",
@@ -19,7 +23,9 @@ export default {
   },
   data: function () {
     return {
+      mounted: false,
       jsonText: "",
+      resizer: null,
       aceHeight: "550px",
       aceOptions: {
         wrap: true,
@@ -27,14 +33,8 @@ export default {
     }
   },
   methods: {
-    editorInit: function (edt) {
-      require('brace/ext/language_tools') //language extension prerequsite...
-      require('brace/mode/json')    //language
-      require('brace/theme/github')
-      require('brace/snippets/json') //snippet
-      new ResizeSensor(this.$refs.aceContainer.$el, ()=>{
-        edt.resize()
-      })
+    editorInit: function () {
+
     },
     prettyit() {
       try {
@@ -47,6 +47,31 @@ export default {
         })
       }
     }
+  },
+  mounted() {
+    this.mounted = true
+    if (!this.resizer) {
+      this.resizer = new ResizeSensor(this.$refs.aceContainer.$el, ()=>{
+        this.$refs.aceContainer.editor.resize()
+      })
+    }
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm=>{
+      if (vm.mounted) {
+        vm.resizer = new ResizeSensor(vm.$refs.aceContainer.$el, () => {
+          vm.$refs.aceContainer.editor.resize()
+        })
+      }
+      return true
+    })
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.resizer) {
+      this.resizer.detach()
+      this.resizer = null
+    }
+    next(true)
   }
 }
 </script>

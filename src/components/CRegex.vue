@@ -87,7 +87,10 @@ export default {
       let mark = this.$refs.hlBg.querySelector("mark:nth-child(" + (row.seq) + ")")
       if (mark) {
         let st = mark.offsetTop - this.$refs.rptext.offsetHeight / 2
-        this.$refs.rptext.scrollTop = st < 0 ? 0 : st
+        this.$refs.rptext.scrollTo({
+          top: st<0?0:st,
+          behavior:"smooth"
+        })
         mark.classList.add("attention")
         setTimeout(() => {
           mark.classList.remove("attention")
@@ -188,7 +191,7 @@ export default {
       return sanitizedText
     },
     highlightText(plaintext) {
-      plaintext = plaintext.replaceAll("\x01", "").replaceAll("\x02", "")
+      plaintext = plaintext.replaceAll("\x01", "\x03").replaceAll("\x02", "\x03").replace(/\n$/g, '\n\n')
       for (let i = this.matchResult.result.length - 1; i >= 0; --i) {
         plaintext = plaintext.splice(this.matchResult.result[i].index, "\x01")
         plaintext = plaintext.splice(this.matchResult.result[i].index + this.matchResult.result[i].length + 1, "\x02")
@@ -201,7 +204,6 @@ export default {
           // eslint-disable-next-line no-control-regex
           .replaceAll("\x01", "<mark>")
           .replaceAll("\x02", "</mark>")
-          .replace(/\n$/g, '\n\n')
       return plaintext
     },
     handleInput() {
