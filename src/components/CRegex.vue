@@ -44,6 +44,8 @@
     <el-table
         v-if="matchResult.result.length>0"
         :data="matchResult.result"
+        @cell-mouse-enter="highlightMatch"
+        @row-click="scrollMarkIntoView"
         height="250"
         border
         style="width: 100%">
@@ -64,6 +66,30 @@ import tool from "@/tools/common"
 export default {
   name: "CRegex",
   methods: {
+    scrollMarkIntoView(row) {
+      if (!row) return
+      let mark = this.$refs.hlBg.querySelector("mark:nth-child(" + (row.seq) +")")
+      if (mark) {
+        let st = mark.offsetTop - this.$refs.rptext.offsetHeight/2
+        this.$refs.rptext.scrollTop = st<0?0:st
+        mark.classList.add("attention")
+        setTimeout(()=>{
+          mark.classList.remove("attention")
+        }, 600)
+      }
+    },
+    highlightMatch(row) {
+      let mark = this.$refs.hlBg.querySelector("mark:nth-child(" + (row.seq) +")")
+      if (!mark || mark.classList.contains("current")) {
+        return
+      } else {
+        let previous = this.$refs.hlBg.querySelectorAll("mark.current")
+        previous && previous.forEach((el) => {
+          el.classList.remove("current")
+        })
+        mark.classList.add("current")
+      }
+    },
     compileRegexp: tool.debounce(function() {
       if (this.exp.length) {
         try {
@@ -125,7 +151,7 @@ export default {
       return sanitizedText
     },
     highlightText(plaintext) {
-      plaintext = plaintext.replace("\x01", "").replace("\x02", "")
+      plaintext = plaintext.replaceAll("\x01", "").replaceAll("\x02", "")
       for (let i = this.matchResult.result.length - 1; i >= 0; --i) {
         plaintext = plaintext.splice(this.matchResult.result[i].index, "\x01")
         plaintext = plaintext.splice(this.matchResult.result[i].index + this.matchResult.result[i].length + 1, "\x02")
@@ -133,7 +159,7 @@ export default {
       plaintext = this.sanitize(plaintext)
       plaintext = plaintext
           // eslint-disable-next-line no-control-regex
-          .replaceAll(/\x01(.+?)\x02/msg, "<mark>$1</mark>").replace(/\n$/g, '\n\n')
+          .replaceAll("\x01", "<mark>").replaceAll("\x02", "</mark>").replace(/\n$/g, '\n\n')
       return plaintext
     },
     handleInput() {
@@ -247,8 +273,19 @@ textarea {
     margin: -1px;
     border-radius: 3px;
     background-color: #d4e9ab; /* or whatever */
+    //transition: background-color 0.1s ease, border 0.1s ease;
+    &.current {
+      background-color: orange;
+      position: relative;
+      z-index: 1;
+      border: 1px solid darken(orange, 10%);
+    }
+    &.attention {
+      animation: glow 0.5s 0.1s;
+    }
   }
 }
+
 #sourceText {
   z-index: 10;
   position: relative;
@@ -270,5 +307,14 @@ textarea {
 }
 .collapse-enter-active, .collapse-leave-active {
   transition: height .3s ease;
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 0 darkorange;
+  }
+  50% {
+    box-shadow: 0 0 0 3px darkorange;
+  }
 }
 </style>
