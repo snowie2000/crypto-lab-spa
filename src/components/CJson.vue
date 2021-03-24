@@ -14,6 +14,7 @@ import {ResizeSensor} from "css-element-queries"
 import 'brace/ext/language_tools' //language extension prerequsite...
 import 'brace/mode/json'    //language
 import 'brace/theme/github'
+import 'brace/ext/searchbox'
 import 'brace/snippets/json' //snippet
 
 export default {
@@ -45,6 +46,26 @@ export default {
           message: e.message,
           type: "warning"
         })
+        let pos = e.message.match(/position\s*(\d+)/i) //chrome exception
+        let ace = this.$refs.aceContainer.editor
+        let textpos = null
+        if (pos && pos.length===2) {
+          textpos = ace.session.doc.indexToPosition(pos[1])
+        } else {
+          pos = e.message.match(/line\s*(\d+)\s*column\s*(\d+)/i) //firefox exception
+          if (pos && pos.length===3) {
+            textpos = {
+              row: parseInt(pos[1])-1,
+              column: parseInt(pos[2])-1
+            }
+          }
+        }
+        if (textpos) {
+          ace.moveCursorToPosition(textpos)
+          ace.clearSelection()
+          ace.renderer.scrollCursorIntoView(textpos, 0.5)
+          ace.focus()
+        }
       }
     }
   },
