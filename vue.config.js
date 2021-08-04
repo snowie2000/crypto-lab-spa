@@ -21,7 +21,9 @@ module.exports = {
                 short_name: 'CryptoWS',
                 description: 'A Handy crypto lab on your palm!',
                 background_color: '#ffffff',
-                ios: true,
+                ios: {
+                    'apple-mobile-web-app-status-bar-style': "black-translucent"
+                },
                 icons: [
                     {
                         src: path.resolve('public/favicon.png'),

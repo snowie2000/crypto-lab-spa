@@ -294,6 +294,10 @@ textarea {
   background: transparent !important;
   font-family: Monospaced, Consolas, monospace;
   font-size: 13px;
+
+  &::placeholder {
+    color: #C1C5CD;
+  }
 }
 
 .container {
