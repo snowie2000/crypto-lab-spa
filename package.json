@@ -12,6 +12,7 @@
     "crypto-js": "^4.0.0",
     "css-element-queries": "^1.2.3",
     "element-ui": "^2.15.1",
+    "error-cause": "^1.0.5",
     "highlightjs": "^9.16.2",
     "json-stringify-pretty-compact": "^3.0.0",
     "less": "^4.1.1",

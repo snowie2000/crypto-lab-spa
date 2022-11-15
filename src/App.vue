@@ -12,6 +12,7 @@
 <script>
 
 import "@/config/config.Element"
+import 'error-cause/auto'
 
 export default {
   name: 'App',

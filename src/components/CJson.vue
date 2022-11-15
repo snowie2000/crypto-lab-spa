@@ -16,6 +16,20 @@ import 'brace/mode/json'    //language
 import 'brace/theme/github'
 import 'brace/ext/searchbox'
 import 'brace/snippets/json' //snippet
+import jsonlint from "@/lib/jsonlint"
+
+// interface JsonLintError {
+//   expected: string[];
+//   line: number;
+//   loc: {
+//     first_line: number,
+//     last_line: number,
+//     first_column: number,
+//     last_column: number,
+//   };
+//   text: string;
+//   token: string;
+// }
 
 export default {
   name: "CJson",
@@ -39,13 +53,16 @@ export default {
     },
     prettyit() {
       try {
-        let obj = JSON.parse(this.jsonText)
+        let obj = jsonlint.parse(this.jsonText)
         this.jsonText = prettier(obj)
       } catch (e) {
         this.$message({
-          message: e.message,
-          type: "warning"
+          message: "<pre>"+ e.message + "</pre>",
+          dangerouslyUseHTMLString: true,
+          type: "warning",
         })
+        /*
+        // standard browser parser exception handling
         let pos = e.message.match(/position\s*(\d+)/i) //chrome exception
         let ace = this.$refs.aceContainer.editor
         let textpos = null
@@ -60,6 +77,13 @@ export default {
             }
           }
         }
+        */
+
+        const textpos = {
+          row: e.cause.loc.last_line - 1,
+          column: e.cause.loc.last_column
+        };
+        let ace = this.$refs.aceContainer.editor
         if (textpos) {
           ace.moveCursorToPosition(textpos)
           ace.clearSelection()
@@ -119,4 +143,10 @@ export default {
        border-color: #409EFF;
      }
   }
+</style>
+
+<style>
+pre {
+  margin: 0;
+}
 </style>
