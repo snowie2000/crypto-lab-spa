@@ -1,8 +1,10 @@
 <template>
   <div>
-    <editor id="jsonEditor" ref="aceContainer" v-model="jsonText" @init="editorInit" lang="json" theme="github" width="100%" :height="aceHeight" :options="aceOptions"></editor>
+    <editor id="jsonEditor" ref="aceContainer" v-model="jsonText" @init="editorInit" lang="json" theme="github"
+      width="100%" :height="aceHeight" :options="aceOptions"></editor>
     <div class="text-centered" style="margin-top: 10px">
       <el-button @click="prettyit" type="primary">Pretty Print</el-button>
+      <el-button @click="prettyclip" type="primary">Paste from clipboard</el-button>
     </div>
   </div>
 </template>
@@ -10,12 +12,12 @@
 <script>
 import prettier from "json-stringify-pretty-compact"
 import editor from "vue2-ace-editor"
-import {ResizeSensor} from "css-element-queries"
-import 'brace/ext/language_tools' //language extension prerequsite...
-import 'brace/mode/json'    //language
-import 'brace/theme/github'
-import 'brace/ext/searchbox'
-import 'brace/snippets/json' //snippet
+import { ResizeSensor } from "css-element-queries"
+import "brace/ext/language_tools" //language extension prerequsite...
+import "brace/mode/json" //language
+import "brace/theme/github"
+import "brace/ext/searchbox"
+import "brace/snippets/json" //snippet
 import jsonlint from "@/lib/jsonlint"
 
 // interface JsonLintError {
@@ -34,7 +36,7 @@ import jsonlint from "@/lib/jsonlint"
 export default {
   name: "CJson",
   components: {
-    editor
+    editor,
   },
   data: function () {
     return {
@@ -44,12 +46,24 @@ export default {
       aceHeight: "550px",
       aceOptions: {
         wrap: true,
-      }
+      },
     }
   },
   methods: {
-    editorInit: function () {
-
+    editorInit: function () {},
+    prettyclip() {
+      navigator.clipboard.readText().then((text) => {
+        try {
+          let obj = JSON.parse(text)
+          this.jsonText = prettier(obj)
+        } catch (e) {
+          this.$message({
+            message: "<pre>" + e.message + "</pre>",
+            dangerouslyUseHTMLString: true,
+            type: "warning",
+          })
+        }
+      })
     },
     prettyit() {
       try {
@@ -57,7 +71,7 @@ export default {
         this.jsonText = prettier(obj)
       } catch (e) {
         this.$message({
-          message: "<pre>"+ e.message + "</pre>",
+          message: "<pre>" + e.message + "</pre>",
           dangerouslyUseHTMLString: true,
           type: "warning",
         })
@@ -81,8 +95,8 @@ export default {
 
         const textpos = {
           row: e.cause.loc.last_line - 1,
-          column: e.cause.loc.last_column
-        };
+          column: e.cause.loc.last_column,
+        }
         let ace = this.$refs.aceContainer.editor
         if (textpos) {
           ace.moveCursorToPosition(textpos)
@@ -91,18 +105,18 @@ export default {
           ace.focus()
         }
       }
-    }
+    },
   },
   mounted() {
     this.mounted = true
     if (!this.resizer) {
-      this.resizer = new ResizeSensor(this.$refs.aceContainer.$el, ()=>{
+      this.resizer = new ResizeSensor(this.$refs.aceContainer.$el, () => {
         this.$refs.aceContainer.editor.resize()
       })
     }
   },
   beforeRouteEnter(to, from, next) {
-    next(vm=>{
+    next((vm) => {
       if (vm.mounted) {
         vm.resizer = new ResizeSensor(vm.$refs.aceContainer.$el, () => {
           vm.$refs.aceContainer.editor.resize()
@@ -117,32 +131,32 @@ export default {
       this.resizer = null
     }
     next(true)
-  }
+  },
 }
 </script>
 
 <style scoped lang="less">
-  #jsonEditor {
-    display: block;
-    padding: 5px 15px;
-    line-height: 1.5;
-    box-sizing: border-box;
-    width: 100%;
-    max-height: 80vh;
-    font-size: 13px;
-    color: #606266;
-    resize: vertical;
-    border: 1px solid #DCDFE6;
-    border-radius: 4px;
-    transition: border-color .2s cubic-bezier(.645,.045,.355,1);
-    &:hover {
-       border-color: #C0C4CC;
-     }
-    &:focus {
-       outline: 0;
-       border-color: #409EFF;
-     }
+#jsonEditor {
+  display: block;
+  padding: 5px 15px;
+  line-height: 1.5;
+  box-sizing: border-box;
+  width: 100%;
+  max-height: 80vh;
+  font-size: 13px;
+  color: #606266;
+  resize: vertical;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  &:hover {
+    border-color: #c0c4cc;
   }
+  &:focus {
+    outline: 0;
+    border-color: #409eff;
+  }
+}
 </style>
 
 <style>

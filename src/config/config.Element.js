@@ -2,6 +2,7 @@ import Vue from 'vue';
 import {
     Select,
     Dialog,
+    Card,
     Tree,
     Input,
     Button,
@@ -23,6 +24,7 @@ import {
 import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(Select)
+Vue.use(Card)
 Vue.use(Dialog)
 Vue.use(Tabs)
 Vue.use(Input)

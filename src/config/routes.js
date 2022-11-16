@@ -5,6 +5,7 @@ import json from "@/components/CJson"
 import hmac from "@/components/CHMac"
 import md5 from "@/components/CMD5"
 import regex from "@/components/CRegex"
+import nat from "@/components/CNat"
 
 Vue.use(Router)
 
@@ -33,6 +34,10 @@ const router = new Router({
             path: "/regex",
             name: "regex",
             component: regex
+        }, {
+            path: "/nat",
+            name: "nat",
+            component: nat
         }
     ]
 })

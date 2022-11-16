@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <el-tabs :value="activeName" @tab-click="switchTable" ref="tab">
-      <el-tab-pane v-for="label in ['base64', 'md5', 'json', 'hmac', 'regex']" :key="label" :label="label.toUpperCase()" :name="label"></el-tab-pane>
+      <el-tab-pane v-for="label in ['base64', 'md5', 'json', 'hmac', 'regex', 'nat']" :key="label" :label="label.toUpperCase()" :name="label"></el-tab-pane>
     </el-tabs>
     <keep-alive>
       <router-view></router-view>
