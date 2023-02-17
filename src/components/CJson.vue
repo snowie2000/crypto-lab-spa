@@ -67,7 +67,7 @@ export default {
     },
     prettyit() {
       try {
-        let obj = jsonlint.parse(this.jsonText)
+        let obj = JSON.parse(this.jsonText)
         this.jsonText = prettier(obj)
       } catch (e) {
         this.$message({
@@ -75,29 +75,35 @@ export default {
           dangerouslyUseHTMLString: true,
           type: "warning",
         })
-        /*
+
         // standard browser parser exception handling
-        let pos = e.message.match(/position\s*(\d+)/i) //chrome exception
+        let pos = e.message.match(/position\s*(\d+)/i) //chrome exception parser first
         let ace = this.$refs.aceContainer.editor
         let textpos = null
-        if (pos && pos.length===2) {
+        if (pos && pos.length === 2) {
           textpos = ace.session.doc.indexToPosition(pos[1])
         } else {
           pos = e.message.match(/line\s*(\d+)\s*column\s*(\d+)/i) //firefox exception
-          if (pos && pos.length===3) {
+          if (pos && pos.length === 3) {
             textpos = {
-              row: parseInt(pos[1])-1,
-              column: parseInt(pos[2])-1
+              row: parseInt(pos[1]) - 1,
+              column: parseInt(pos[2]) - 1,
             }
           }
         }
-        */
 
-        const textpos = {
-          row: e.cause.loc.last_line - 1,
-          column: e.cause.loc.last_column,
+        // no match from browser exception, we use jsonlint to check json for errors.
+        if (!textpos) {
+          try {
+            jsonlint.parse(this.jsonText)
+          } catch (e) {
+            textpos = {
+              row: e.cause.loc.last_line - 1,
+              column: e.cause.loc.last_column,
+            }
+          }
         }
-        let ace = this.$refs.aceContainer.editor
+        // move cursor to the error position
         if (textpos) {
           ace.moveCursorToPosition(textpos)
           ace.clearSelection()
